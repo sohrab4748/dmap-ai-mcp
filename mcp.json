@@ -1,0 +1,204 @@
+{
+  "name": "dmap-ai",
+  "version": "1.0.3",
+  "displayName": "DMAP-AI",
+  "description": "Drought Monitoring and Analysis Platform. Provides SPI tables, drought severity event detection, wavelet scalogram, and drought periodicity analysis over real climate data (NASA POWER and ERA5). Read-only tools — no user data is written or stored.",
+  "homepage": "https://droughtanalysis.com",
+  "privacyPolicy": "https://droughtanalysis.com/privacy",
+  "termsOfService": "https://droughtanalysis.com/terms",
+  "contact": "https://agrimetsoft.com/contact",
+  "license": "proprietary",
+  "publisher": {
+    "name": "AgriMetSoft LLC",
+    "url": "https://agrimetsoft.com"
+  },
+  "categories": [
+    "science",
+    "climate",
+    "data",
+    "research",
+    "agriculture"
+  ],
+  "mcpServers": {
+    "dmap-ai": {
+      "type": "streamable-http",
+      "url": "https://droughtanalysis.com/mcp"
+    }
+  },
+  "tools": [
+    {
+      "name": "debug_ping",
+      "description": "Simple DMAP-AI production connector test. Confirms the server is live and returns the current tool version and list of available free tools.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "run_spi_table",
+      "description": "Returns a Standardized Precipitation Index (SPI) table for a given location and period. Supports Classic SPI, USDM-style, percentile band, and AI/ML k-means drought categories. Data from NASA POWER or ERA5.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": ["latitude", "longitude"],
+        "properties": {
+          "latitude":        { "type": "number", "description": "Decimal degrees, e.g. 42.03" },
+          "longitude":       { "type": "number", "description": "Decimal degrees, e.g. -93.62" },
+          "start_date":      { "type": "string", "description": "YYYY-MM-DD (default: 1981-01-01)" },
+          "end_date":        { "type": "string", "description": "YYYY-MM-DD (default: 2024-12-31)" },
+          "baseline_start":  { "type": "integer", "description": "Baseline start year (default: 1981)" },
+          "baseline_end":    { "type": "integer", "description": "Baseline end year (default: 2024)" },
+          "spi_scale":       { "type": "integer", "description": "SPI accumulation scale in months, 1–48 (default: 12)" },
+          "data_source":     { "type": "string", "description": "nasa_power or era5 (default: nasa_power)" },
+          "step":            { "type": "string", "description": "yearly or monthly (default: yearly)" },
+          "yearly_method":   { "type": "string", "description": "jan_dec_totals (default)" },
+          "category_scheme": { "type": "string", "description": "classic_spi | usdm_style | percentile_band | kmeans" },
+          "max_rows":        { "type": "integer", "description": "Max rows returned (default: 1000)" }
+        }
+      }
+    },
+    {
+      "name": "run_drought_severity_events",
+      "description": "Detects drought events using a configurable SPI severity threshold. Returns a drought events table with start date, end date, duration, minimum SPI, and magnitude. Data from NASA POWER or ERA5.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": ["latitude", "longitude"],
+        "properties": {
+          "latitude":           { "type": "number" },
+          "longitude":          { "type": "number" },
+          "start_date":         { "type": "string", "description": "YYYY-MM-DD (default: 1981-01-01)" },
+          "end_date":           { "type": "string", "description": "YYYY-MM-DD (default: 2024-12-31)" },
+          "baseline_start":     { "type": "integer" },
+          "baseline_end":       { "type": "integer" },
+          "spi_scale":          { "type": "integer", "description": "1–48 months (default: 12)" },
+          "data_source":        { "type": "string", "description": "nasa_power or era5" },
+          "step":               { "type": "string" },
+          "yearly_method":      { "type": "string" },
+          "category_scheme":    { "type": "string" },
+          "severity_threshold": { "type": "string", "description": "SPI threshold e.g. -0.99, -1.5 (default: -0.99)" }
+        }
+      }
+    },
+    {
+      "name": "run_wavelet_scalogram",
+      "description": "Runs continuous wavelet transform on SPI data and returns a compact time–period power matrix (scalogram). Highlights high-power drought zones across time and frequency. Data from NASA POWER or ERA5.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": ["latitude", "longitude"],
+        "properties": {
+          "latitude":     { "type": "number" },
+          "longitude":    { "type": "number" },
+          "start_date":   { "type": "string", "description": "YYYY-MM-DD (default: 1981-01-01)" },
+          "end_date":     { "type": "string", "description": "YYYY-MM-DD (default: 2024-12-31)" },
+          "baseline_start": { "type": "integer" },
+          "baseline_end":   { "type": "integer" },
+          "spi_scale":    { "type": "integer", "description": "1–48 months (default: 12)" },
+          "data_source":  { "type": "string", "description": "nasa_power or era5" },
+          "step":         { "type": "string" },
+          "yearly_method": { "type": "string" },
+          "max_periods":  { "type": "integer", "description": "Downsampled period axis size (default: 24)" },
+          "max_times":    { "type": "integer", "description": "Downsampled time axis size (default: 60)" }
+        }
+      }
+    },
+    {
+      "name": "run_drought_periodicity_analysis",
+      "description": "Computes the global wavelet spectrum and identifies dominant and secondary drought periods (cycles) for a location. Returns ranked periodicities and global power values. Data from NASA POWER or ERA5.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "required": ["latitude", "longitude"],
+        "properties": {
+          "latitude":       { "type": "number" },
+          "longitude":      { "type": "number" },
+          "start_date":     { "type": "string", "description": "YYYY-MM-DD (default: 1981-01-01)" },
+          "end_date":       { "type": "string", "description": "YYYY-MM-DD (default: 2024-12-31)" },
+          "baseline_start": { "type": "integer" },
+          "baseline_end":   { "type": "integer" },
+          "spi_scale":      { "type": "integer", "description": "1–48 months (default: 12)" },
+          "data_source":    { "type": "string", "description": "nasa_power or era5" },
+          "step":           { "type": "string" },
+          "yearly_method":  { "type": "string" }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "title": "Run drought periodicity analysis",
+      "tool": "run_drought_periodicity_analysis",
+      "prompt": "Use DMAP-AI to run global wavelet analysis for SPI-12 in Ames, Iowa from 1981 to 2024. Then explain the dominant period.",
+      "arguments": {
+        "latitude": 42.03,
+        "longitude": -93.62,
+        "start_date": "1981-01-01",
+        "end_date": "2024-12-31",
+        "spi_scale": 12,
+        "data_source": "nasa_power"
+      }
+    },
+    {
+      "title": "Get SPI-12 table for a location",
+      "tool": "run_spi_table",
+      "prompt": "Show me the SPI-12 drought table for Lincoln, Nebraska from 1990 to 2020.",
+      "arguments": {
+        "latitude": 40.81,
+        "longitude": -96.68,
+        "start_date": "1990-01-01",
+        "end_date": "2020-12-31",
+        "spi_scale": 12,
+        "data_source": "nasa_power"
+      }
+    },
+    {
+      "title": "Detect drought events with custom threshold",
+      "tool": "run_drought_severity_events",
+      "prompt": "Find all drought events in Kansas City from 1981 to 2024 using SPI-12 and a severity threshold of -1.5.",
+      "arguments": {
+        "latitude": 39.10,
+        "longitude": -94.58,
+        "start_date": "1981-01-01",
+        "end_date": "2024-12-31",
+        "spi_scale": 12,
+        "severity_threshold": "-1.5"
+      }
+    },
+    {
+      "title": "Wavelet scalogram for high-power drought zones",
+      "tool": "run_wavelet_scalogram",
+      "prompt": "Run a wavelet scalogram for SPI-6 in Phoenix, Arizona from 1981 to 2024 and highlight the high-power zones.",
+      "arguments": {
+        "latitude": 33.45,
+        "longitude": -112.07,
+        "start_date": "1981-01-01",
+        "end_date": "2024-12-31",
+        "spi_scale": 6,
+        "data_source": "nasa_power"
+      }
+    }
+  ]
+}
