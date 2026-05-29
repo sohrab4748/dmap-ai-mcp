@@ -7,7 +7,7 @@
   "privacyPolicy": "https://droughtanalysis.com/privacy",
   "termsOfService": "https://droughtanalysis.com/terms",
   "contact": "https://agrimetsoft.com/contact",
-  "license": "proprietary",
+  "license": "MIT",
   "publisher": {
     "name": "AgriMetSoft LLC",
     "url": "https://agrimetsoft.com"
