@@ -5,6 +5,7 @@
 [![MCP](https://img.shields.io/badge/MCP-compatible-blue)](https://modelcontextprotocol.io)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Live Server](https://img.shields.io/badge/server-live-brightgreen)](https://droughtanalysis.com/mcp)
+[![Glama Score](https://glama.ai/mcp/servers/sohrab4748/dmap-ai-mcp/badges/score.svg)](https://glama.ai/mcp/servers/sohrab4748/dmap-ai-mcp)
 
 DMAP-AI is a remote MCP server by [AgriMetSoft LLC](https://agrimetsoft.com) that exposes drought monitoring and analysis tools to AI assistants — including Claude, ChatGPT, and any MCP-compatible client. It provides SPI tables, drought severity event detection, wavelet scalogram analysis, and drought periodicity diagnostics over real climate data (NASA POWER and ERA5).
 
