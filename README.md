@@ -19,7 +19,8 @@ DMAP-AI is a remote MCP server by [AgriMetSoft LLC](https://agrimetsoft.com) tha
 4. Click **Add**, then enable it in your chat via the `+` button
 
 ### ChatGPT / Gemini
-Already published — search for **DMAP-AI** in the respective app stores.
+
+DMAP-AI may also be available through compatible AI apps or custom assistant workflows. MCP support depends on the client’s current connector features.
 
 ### Any MCP client (mcp.json / config)
 ```json
